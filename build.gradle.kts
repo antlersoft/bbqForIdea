@@ -36,9 +36,11 @@ version = pluginVersion
 repositories {
     mavenCentral()
     jcenter()
+    mavenLocal()
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.11.0")
+    implementation("com.antlersoft:bbqilstandalone:0.9.2")
 }
 
 // Configure gradle-intellij-plugin plugin.
