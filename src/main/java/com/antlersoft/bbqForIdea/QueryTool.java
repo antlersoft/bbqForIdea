@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 
 import com.antlersoft.query.environment.ui.HistoryList;
@@ -34,7 +35,7 @@ public class QueryTool {
         this.project = project;
         queryArea = new JTextArea(6, 30);
         QueryAction queryAction = new QueryAction();
-        resultList = new ResultList();
+        resultList = project.getResultList();
         historyList = new HistoryList(queryArea, queryAction);
         JButton queryButton=new JButton( queryAction);
         Dimension buttonDimension=queryButton.getPreferredSize();
@@ -50,6 +51,9 @@ public class QueryTool {
 
     void displayMessage(String title, String text)
     {
+        if (text == null) {
+            text = "[No message]";
+        }
         Notifications.Bus.notify(new Notification(BrowseByQueryProject.BrowseByQueryGroup, title, text, NotificationType.ERROR));
     }
 
@@ -69,7 +73,7 @@ public class QueryTool {
                 project.query.setLine( line);
                 SelectionSetExpression querySelection = project.query.getCurrentSelection();
                 querySelection.clear();
-                for (Object o : resultList.getSelectedValues())
+                for (Object o : resultList.getSelectedValuesList())
                 {
                     querySelection.add(o);
                 }

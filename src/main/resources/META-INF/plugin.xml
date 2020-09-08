@@ -8,12 +8,23 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <projectService serviceImplementation="com.antlersoft.bbqForIdea.BrowseByQueryProject"/>
         <applicationService serviceImplementation="com.github.antlersoft.bbqforidea.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.antlersoft.bbqforidea.services.MyProjectService"/>
+        <toolWindow anchor="right" factoryClass="com.antlersoft.bbqForIdea.QueryFactory" id="BBQ Query" secondary="true" />
+        <toolWindow anchor="bottom" factoryClass="com.antlersoft.bbqForIdea.ResultToolFactory" id="BBQ Result" secondary="true" />
     </extensions>
 
     <projectListeners>
         <listener class="com.github.antlersoft.bbqforidea.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </projectListeners>
+    <actions>
+        <action id="com.antlersoft.bbqForIdea.AnalyzePathAction" class="com.antlersoft.bbqForIdea.AnalyzePathAction"
+                text="BBQ Analyze jar / dir / .class"
+                description="Add the code compiled into a .jar or .class file, or files found with a directory, into the BBQ database for this project">
+            <add-to-group group-id="AnalyzeActions" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift Q"/>
+        </action>
+    </actions>
 </idea-plugin>
