@@ -13,11 +13,14 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
+import com.intellij.openapi.editor.*;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -75,9 +78,27 @@ public class BrowseByQueryProject implements Disposable, PersistentStateComponen
         if (o instanceof SourceObject) {
             SourceObject source = (SourceObject)o;
             DBClass dbc = source.getDBClass();
-            PsiFile[] files = FilenameIndex.getFilesByName(_project, dbc.getSourceFile(), GlobalSearchScope.everythingScope(_project));
+            String sourceFile = dbc.getSourceFile();
+            if (sourceFile == null) {
+                for (; dbc.getContainingClass() != null; dbc=dbc.getContainingClass());
+                sourceFile = dbc.getName().replace('.','/')+".java";
+            }
+            queryWindow.displayMessage("Trying to display","Class: "+dbc.getName()+" source: "+sourceFile);
+            PsiFile[] files = FilenameIndex.getFilesByName(_project, sourceFile, GlobalSearchScope.everythingScope(_project));
             if (files != null && files.length > 0) {
                 files[0].navigate(true);
+                if (source.getLineNumber() > 0 && source.getLineNumber() < 100000) {
+                    Document doc = FileDocumentManager.getInstance().getDocument(files[0].getVirtualFile());
+                    if (doc != null) {
+                        final Editor[] editors = EditorFactory.getInstance().getEditors(doc, _project);
+                        int startOffset = doc.getLineStartOffset(source.getLineNumber());
+                        if (editors.length > 0) {
+                            Editor editor = editors[0];
+                            LogicalPosition lp = editor.offsetToLogicalPosition(startOffset);
+                            editor.getScrollingModel().scrollTo(lp, ScrollType.MAKE_VISIBLE);
+                        }
+                    }
+                }
             }
         }
     }
