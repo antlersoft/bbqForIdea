@@ -83,7 +83,6 @@ public class BrowseByQueryProject implements Disposable, PersistentStateComponen
                 for (; dbc.getContainingClass() != null; dbc=dbc.getContainingClass());
                 sourceFile = dbc.getName().replace('.','/')+".java";
             }
-            queryWindow.displayMessage("Trying to display","Class: "+dbc.getName()+" source: "+sourceFile);
             PsiFile[] files = FilenameIndex.getFilesByName(_project, sourceFile, GlobalSearchScope.everythingScope(_project));
             if (files != null && files.length > 0) {
                 files[0].navigate(true);
