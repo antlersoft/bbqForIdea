@@ -36,7 +36,7 @@ repositories {
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.11.0")
-    implementation("com.antlersoft:bbqilstandalone:0.9.2")
+    implementation("com.antlersoft.browsebyquery:browsebyquery-core:0.9.3")
 }
 
 // Configure gradle-intellij-plugin plugin.

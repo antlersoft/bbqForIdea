@@ -1,20 +1,17 @@
 package com.antlersoft.bbqForIdea;
 
-import com.antlersoft.query.environment.ui.QueryFrame;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class AnalyzePathAction extends AnAction {
     private final FileChooserDescriptor _descriptor = new FileChooserDescriptor(true, true, true, true, false, true);
@@ -28,44 +25,33 @@ public class AnalyzePathAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getProject();
+        if (project == null) {
+            return;
+        }
         final BrowseByQueryProject bbq = project.getService(BrowseByQueryProject.class);
         if (bbq == null) {
             return;
         }
-        _isAnalyzing = true;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<VirtualFile> files = new ArrayList<>();
-                FileChooser.chooseFile(_descriptor, project, null, new Consumer<VirtualFile>() {
+        FileChooser.chooseFiles(_descriptor, project, null, new Consumer<List<VirtualFile>>() {
 
-                    /**
-                     * @param virtualFile consequently takes value of each element of the set this processor is passed to for processing.
-                     *                    t is supposed to be a not-null value.
-                     */
-                    @Override
-                    public void consume(VirtualFile virtualFile) {
-                        files.add(virtualFile);
-                    }
-                });
-                new Thread( new Runnable() {
-                    public void run()
-                    {
+            /**
+             * @param virtualFiles consequently takes value of each element of the set this processor is passed to for processing.
+             *                    t is supposed to be a not-null value.
+             */
+            @Override
+            public void consume(List<VirtualFile> virtualFiles) {
+                if (virtualFiles.size() > 0) {
+                    _isAnalyzing = true;
+                    new Thread(() -> {
                         try {
-                            bbq.analyzeVirtualFiles(files);
+                            bbq.analyzeVirtualFiles(virtualFiles);
                         } catch (Exception excp) {
-                            SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    bbq.queryWindow.displayMessage("Error analyzing files", excp.getLocalizedMessage());
-                                }
-                            });
-                        }
-                        finally {
+                            ApplicationManager.getApplication().invokeLater(() -> bbq.queryWindow.displayMessage("Error analyzing files", excp.getLocalizedMessage()));
+                        } finally {
                             _isAnalyzing = false;
                         }
-                    }
-                }).start();
+                    }).start();
+                }
             }
         });
     }
