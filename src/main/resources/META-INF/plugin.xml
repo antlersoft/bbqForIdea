@@ -21,7 +21,7 @@
         <action id="com.antlersoft.bbqForIdea.AnalyzePathAction" class="com.antlersoft.bbqForIdea.AnalyzePathAction"
                 text="BBQ Analyze jar / dir / .class"
                 description="Add the code compiled into a .jar or .class file, or files found with a directory, into the BBQ database for this project">
-            <add-to-group group-id="AnalyzeActions" anchor="last"/>
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift Q"/>
         </action>
     </actions>
