@@ -14,7 +14,7 @@
     </extensions>
 
     <projectListeners>
-        <listener class="com.github.antlersoft.bbqforidea.listeners.MyProjectManagerListener"
+        <listener class="com.antlersoft.bbqForIdea.ProjectListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </projectListeners>
     <actions>
