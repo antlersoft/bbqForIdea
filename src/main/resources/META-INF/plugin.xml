@@ -9,8 +9,6 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="com.antlersoft.bbqForIdea.BrowseByQueryProject"/>
-        <applicationService serviceImplementation="com.github.antlersoft.bbqforidea.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.antlersoft.bbqforidea.services.MyProjectService"/>
         <toolWindow anchor="right" factoryClass="com.antlersoft.bbqForIdea.QueryFactory" id="BBQ Query" secondary="true" />
         <toolWindow anchor="bottom" factoryClass="com.antlersoft.bbqForIdea.ResultToolFactory" id="BBQ Result" secondary="true" />
     </extensions>
